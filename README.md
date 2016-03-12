@@ -2,6 +2,7 @@
 A Tic Tac Toe robot using ABB ARM Robot controlled by Node.JS
 
 *Watch the video:*
+
 [![ABBNator video](http://img.youtube.com/vi/V9dOoicowb0/0.jpg)](http://www.youtube.com/watch?v=V9dOoicowb0)
 
 # What was used in the project?
