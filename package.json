@@ -1,0 +1,20 @@
+{
+  "name": "abbnator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "RealGame.js",
+  "dependencies": {
+    "async": "^1.5.2",
+    "jsftp": "^1.5.3",
+    "lodash": "^4.6.1",
+    "robotjs": "^0.3.7",
+    "serialport": "^2.0.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node RealGame",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

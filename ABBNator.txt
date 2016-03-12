@@ -1,0 +1,110 @@
+MODULE MainModule
+	CONST robtarget p0:=[[667.13,-6.83,794.90],[0.0407328,-0.569198,0.821177,-0.0047701],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+	CONST robtarget p10:=[[795.52,-527.96,1051.40],[0.613573,0.221685,0.734935,-0.185077],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+	PROC main()
+        VAR iodev file;
+        VAR num number;
+        VAR string text;
+
+        VAR bool initializing := TRUE;
+        VAR bool fileExists := FALSE;
+
+        VAR string filePath := "/hd0a/abbnator/target.txt";
+
+        VAR num speed;
+        VAR num posX;
+        VAR num posY;
+        VAR num posZ;
+
+
+        TPErase;
+        TPWrite "==============================";
+        TPWrite "ABBnator is starting...";
+        TPWrite "Credits to: Ivan Seidel Gomes";
+        TPWrite "            Joao Pedro V. Boas";
+        TPWrite "            Eber Lima Silva";
+        TPWrite "";
+        WaitTime 1.0;
+
+        IF IsFile(filePath \RegFile) THEN
+            TPWrite ": Deleting "+filePath;
+            RemoveFile(filePath);
+        ENDIF
+
+        TPWrite "ABBnator running...";
+        initializing := FALSE;
+
+        loop:
+            fileExists := IsFile(filePath \RegFile);
+
+            IF NOT fileExists THEN
+                TPWrite "No file found. Waiting...";
+                WaitTime 1.0;
+                GOTO loop;
+            ENDIF
+
+            ! File format:
+            !! <speed>:x|y|z;
+            Open filePath, file \Read;
+            ! TPWrite ReadStr(file);
+
+            ! Goes back to the start of the file
+            Rewind file;
+
+            ! Reads the desired speed
+            speed := ReadNum(file\Delim:=":");
+
+            ! Reads X, Y and Z
+            posX := ReadNum(file\Delim:="|");
+            posY := ReadNum(file\Delim:="|");
+            posZ := ReadNum(file\Delim:=";");
+
+            ! Validate speed
+            IF speed < 10 THEN
+                speed := 10;
+            ENDIF
+            IF speed > 400 THEN
+                speed := 400;
+            ENDIF
+
+            ! Close file
+            Close file;
+
+            ! Debug
+            TPWrite
+                "SPEED: " + NumToStr(speed, 1) +
+                " X: " + NumToStr(posX, 1) +
+                " Y: "+ NumToStr(posY, 1) +
+                " Z: "+NumToStr(posZ, 1);
+
+            ! Goto Position
+            MoveL Offs(p0, posX, posY, posZ), [speed, 500, 5000, 1000], z0, tool0;
+
+            ! Delete file
+            RemoveFile(filePath);
+            TPWrite "Completed!";
+
+            ! Wait 10ms
+            WaitTime 0.010;
+            GOTO loop;
+
+
+
+		!MoveJ p0, [speed, 500, 5000, 1000], z0, tool0;
+
+		!MoveL Offs(p0,300,0,0), v10, z0, tool0;
+		!MoveL Offs(p0,300,300,0), v10, z0, tool0;
+		!MoveL Offs(p0,0,300,0), v10, z0, tool0;
+        ERROR
+            IF ERRNO = ERR_FILEACC THEN
+                !TPWrite "File does not exists!";
+                !WaitTime 0.01;
+
+                fileExists := FALSE;
+                TRYNEXT;
+            ENDIF
+
+    	ENDPROC
+
+
+ENDMODULE
