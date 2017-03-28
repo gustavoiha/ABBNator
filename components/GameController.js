@@ -1,23 +1,12 @@
 'use strict';
 
 var async = require('async');
-var TicTacToe = require('./TicTacToe');
 
-//
-//  ^ y
-//
-//  . (0,0)   > x
-//   __|__|__
-//   __|__|__
-//     |  |
+var GameController = module.exports = function(robot, size){
 
-var GameController = module.exports = function(robot, sensor, size){
-
-  this.sensor = sensor;
   this.robot = robot;
   this.size = size;
-
-  this.game = new TicTacToe();
+  
 }
 
 
