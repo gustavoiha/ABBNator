@@ -21,7 +21,7 @@ var myRobot = new ABBRobot({
   host: '192.168.125.1',
   user: 'ROB',
   pass: 'PWD'
-}, '/hd0a/abbnator/', 'target.txt');
+}, 'C:/Users/Aluno/Documents/ABBNator-master/Target/', 'target.txt');
 
 console.log('Waiting for robot...');
 
@@ -31,16 +31,10 @@ myRobot.offset.y = 500;
 myRobot.offset.z = -5;
 
 //
-// Setup sensor
-// (Configure your bluetooth path)
-//
-var sensor = new SerialSensor('/dev/cu.MonsterBT-DevB');
-
-//
 // Setup TicTacToe game controller
 //
 var gameSizeMM = 300;
-var game = new GameController(myRobot, sensor, gameSizeMM);
+var game = new GameController(myRobot, gameSizeMM);
 
 
 //
@@ -48,14 +42,11 @@ var game = new GameController(myRobot, sensor, gameSizeMM);
 // (ABB connection and Bluetooth)
 //
 async.parallel([
-  myRobot.onIddle.bind(myRobot),
-  sensor.waitConnect.bind(sensor),
+  myRobot.onIddle.bind(myRobot)
 ], prestart);
 
 
 function prestart() {
-  // Raise arm
-  sensor.deactivate();
 
   // Wait 5 secs to begin, just for safety
   console.log('Starting in 5secs...');
