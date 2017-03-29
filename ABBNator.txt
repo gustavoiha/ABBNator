@@ -1,52 +1,59 @@
 MODULE MainModule
-	CONST robtarget p0:=[[667.13,-6.83,794.90],[0.0407328,-0.569198,0.821177,-0.0047701],[-1,0,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+	CONST robtarget p0:=[[701.23,-162.44,819.04],[0.0153446,3.9186E-09,-0.999882,6.49243E-09],[-1,-1,-1,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
 	CONST robtarget p10:=[[795.52,-527.96,1051.40],[0.613573,0.221685,0.734935,-0.185077],[-1,0,0,0],[9E+09,9E+09,9E+09,9E+09,9E+09,9E+09]];
+    
 	PROC main()
+        
+       
+        
         VAR iodev file;
         VAR num number;
         VAR string text;
 
-        VAR bool initializing := TRUE;
         VAR bool fileExists := FALSE;
 
-        VAR string filePath := "/hd0a/abbnator/target.txt";
+        VAR string filePath := "C:/ABBArtist/Coordinates/target.txt";
 
         VAR num speed;
         VAR num posX;
         VAR num posY;
         VAR num posZ;
-
-
+        
+        
         TPErase;
-        TPWrite "==============================";
-        TPWrite "ABBnator is starting...";
-        TPWrite "Credits to: Ivan Seidel Gomes";
-        TPWrite "            Joao Pedro V. Boas";
-        TPWrite "            Eber Lima Silva";
-        TPWrite "";
-        WaitTime 1.0;
+        TPWrite "Iniciatiling program ABB Artist...";
+        WaitTime 0.5;
+        TPWrite "Moving to start position";
+        
+        ! Moves to start position
+        MoveJ p0,v1000,z50,tool0;
+        
+        TPWrite "Let's Start Drawing =D";
 
+        !Delete left-over target.txt 
         IF IsFile(filePath \RegFile) THEN
             TPWrite ": Deleting "+filePath;
             RemoveFile(filePath);
         ENDIF
-
-        TPWrite "ABBnator running...";
-        initializing := FALSE;
-
+    
+        !Message to start the program
+        TPWrite "ABB Artist is thinking...";
+ 
         loop:
+            
+            !Check if file exists
             fileExists := IsFile(filePath \RegFile);
 
+            !In case file doesn't exist, wait one second and repeat loop
             IF NOT fileExists THEN
                 TPWrite "No file found. Waiting...";
                 WaitTime 1.0;
                 GOTO loop;
             ENDIF
 
-            ! File format:
-            !! <speed>:x|y|z;
+            ! File format: <speed>:<x>|<y>|<z>;
             Open filePath, file \Read;
-            ! TPWrite ReadStr(file);
+            TPWrite ReadStr(file);
 
             ! Goes back to the start of the file
             Rewind file;
@@ -59,7 +66,7 @@ MODULE MainModule
             posY := ReadNum(file\Delim:="|");
             posZ := ReadNum(file\Delim:=";");
 
-            ! Validate speed
+            ! Validate speed: define minimum and maximum accepted values
             IF speed < 10 THEN
                 speed := 10;
             ENDIF
@@ -67,7 +74,6 @@ MODULE MainModule
                 speed := 400;
             ENDIF
 
-            ! Close file
             Close file;
 
             ! Debug
@@ -89,12 +95,6 @@ MODULE MainModule
             GOTO loop;
 
 
-
-		!MoveJ p0, [speed, 500, 5000, 1000], z0, tool0;
-
-		!MoveL Offs(p0,300,0,0), v10, z0, tool0;
-		!MoveL Offs(p0,300,300,0), v10, z0, tool0;
-		!MoveL Offs(p0,0,300,0), v10, z0, tool0;
         ERROR
             IF ERRNO = ERR_FILEACC THEN
                 !TPWrite "File does not exists!";
@@ -105,6 +105,4 @@ MODULE MainModule
             ENDIF
 
     	ENDPROC
-
-
 ENDMODULE
